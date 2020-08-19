@@ -12,58 +12,58 @@ namespace Hjg.Pngcs {
     /// bytes to some other destination
     /// </summary>
     ///
-    abstract internal class ProgressiveOutputStream : MemoryStream {
-        private readonly int size;
+    abstract internal class ProgressiveOutputStream : Stream {
         private long countFlushed = 0;
+        private readonly byte[] buffer;
+        private int buffered = 0;
+
+        public override bool CanWrite => true;
+        public override bool CanRead => false;
+        public override bool CanSeek => false;
+        public override long Position { get => throw new NotSupportedException(); set => throw new NotSupportedException(); }
+
+        public override long Length => throw new NotSupportedException();
+        public override void SetLength(long value) => throw new NotSupportedException();
+        public override int Read(byte[] buffer, int offset, int count) => throw new NotSupportedException();
+        public override long Seek(long offset, SeekOrigin origin) => throw new NotSupportedException();
 
         public ProgressiveOutputStream(int size_0) {
-            this.size = size_0;
-            if (size < 8) throw new PngjException("bad size for ProgressiveOutputStream: " + size);
-        }
-
-        public override void Close() {
-            Flush();
-            base.Close();
+            if (size_0 < 8) throw new PngjException("bad size for ProgressiveOutputStream: " + size_0);
+            buffer = new byte[size_0];
         }
 
         public override void Flush() {
-            base.Flush();
-            CheckFlushBuffer(true);
+            DoFlush();
+        }
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                Flush();
+                base.Dispose(disposing);
+            }
         }
 
         public override void Write(byte[] b, int off, int len) {
-            base.Write(b, off, len);
-            CheckFlushBuffer(false);
+            int end = off + len;
+            for (int i = off; i < end; i++)
+            {
+                buffer[buffered++] = b[i];
+                if (buffered == buffer.Length)
+                    DoFlush();
+            }
         }
 
         public void Write(byte[] b) {
             Write(b, 0, b.Length);
-            CheckFlushBuffer(false);
         }
 
-
-        /// <summary>
-        /// if it's time to flush data (or if forced==true) calls abstract method
-        /// flushBuffer() and cleans those bytes from own buffer
-        /// </summary>
-        ///
-        private void CheckFlushBuffer(bool forced) {
-            int count = (int)Position;
-            byte[] buf = GetBuffer();
-            while (forced || count >= size) {
-                int nb = size;
-                if (nb > count)
-                    nb = count;
-                if (nb == 0)
-                    return;
-                FlushBuffer(buf, nb);
-                countFlushed += nb;
-                int bytesleft = count - nb;
-                count = bytesleft;
-                Position = count;
-                if (bytesleft > 0)
-                    System.Array.Copy((Array)(buf), nb, (Array)(buf), 0, bytesleft);
-            }
+        private void DoFlush()
+        {
+            FlushBuffer(buffer, buffered);
+            countFlushed += buffered;
+            buffered = 0;
         }
 
         protected abstract void FlushBuffer(byte[] b, int n);

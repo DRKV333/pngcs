@@ -31,10 +31,5 @@ namespace Hjg.Pngcs {
             c.Data = b;
             c.WriteChunk(outputStream);
         }
-
-        public override void Close() {
-            // closing the IDAT stream only flushes it, it does not close the underlying stream
-            Flush();
-        }
     }
 }

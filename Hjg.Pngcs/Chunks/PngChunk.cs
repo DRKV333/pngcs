@@ -165,9 +165,12 @@ namespace Hjg.Pngcs.Chunks {
             if (factoryMap == null) initFactory();
             if (isKnown(cid)) {
                 Type t = factoryMap[cid];
+#if !STANDARD
                 if (t == null) Console.Error.WriteLine("What?? " + cid);
-                System.Reflection.ConstructorInfo cons = t.GetConstructor(new Type[] { typeof(ImageInfo) });
-                object o = cons.Invoke(new object[] { info });
+#endif
+                //System.Reflection.ConstructorInfo cons = t.GetConstructor(new Type[] { typeof(ImageInfo) });
+                //object o = cons.Invoke(new object[] { info });
+                object o = Activator.CreateInstance(t, info);
                 chunk = (PngChunk)o;
             }
             if (chunk == null)

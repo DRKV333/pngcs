@@ -474,8 +474,8 @@ namespace Hjg.Pngcs {
             if (rowNum != ImgInfo.Rows - 1)
                 throw new PngjOutputException("all rows have not been written");
             try {
-                datStreamDeflated.Close();
-                datStream.Close();
+                datStreamDeflated.Dispose();
+                datStream.Dispose();
                 WriteLastChunks();
                 WriteEndChunk();
                 if(this.ShouldCloseStream)

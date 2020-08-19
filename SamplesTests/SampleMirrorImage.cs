@@ -9,14 +9,13 @@ namespace SampleTests {
     using Hjg.Pngcs;
     using Hjg.Pngcs.Chunks;
 
-
     public class SampleMirrorImage {
 
         public static void mirror(String orig, String dest) {
             if (orig.Equals(dest)) throw new PngjException("input and output file cannot coincide");
 
-            PngReader pngr = FileHelper.CreatePngReader(orig);
-            PngWriter pngw = FileHelper.CreatePngWriter(dest, pngr.ImgInfo, true);
+            PngReader pngr = SamplesTests.FileHelper.CreatePngReader(orig);
+            PngWriter pngw = SamplesTests.FileHelper.CreatePngWriter(dest, pngr.ImgInfo, true);
             pngr.SetUnpackedMode(true); // we dont want to do the unpacking ourselves, we want a sample per array element
             pngw.SetUseUnPackedMode(true); // not really necesary here, as we pass the ImageLine, but anyway...
             pngw.CopyChunksFirst(pngr, ChunkCopyBehaviour.COPY_ALL_SAFE);

@@ -202,8 +202,10 @@ namespace Hjg.Pngcs {
 
 
         public static void Logdebug(String msg) {
+#if !STANDARD
             if (DEBUG)
                 System.Console.Out.WriteLine(msg);
+#endif
         }
 
 

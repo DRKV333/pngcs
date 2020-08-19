@@ -33,10 +33,13 @@ namespace Hjg.Pngcs.Zlib {
             return ist.ReadByte();
         }
 
-        public override void Close() {
-            ist.Close();
+        protected override void Dispose(bool disposing) {
+            if (disposing)
+            {
+                ist.Dispose();
+                base.Dispose(disposing);
+            }
         }
-
 
         public override void Flush() {
             ist.Flush();

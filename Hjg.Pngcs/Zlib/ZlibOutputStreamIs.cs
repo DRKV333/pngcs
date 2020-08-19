@@ -43,9 +43,13 @@ namespace Hjg.Pngcs.Zlib {
             ost.WriteByte(value);
         }
 
- 
-        public override void Close() {
-            ost.Close();
+
+        protected override void Dispose(bool disposing) {
+            if (disposing)
+            {
+                ost.Dispose();
+                base.Dispose(disposing);
+            }
         }
 
 

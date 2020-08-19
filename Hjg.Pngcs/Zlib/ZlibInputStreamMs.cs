@@ -6,7 +6,7 @@ using System.IO.Compression;
 // ONLY FOR .NET 4.5
 namespace Hjg.Pngcs.Zlib {
 
-#if NET45
+#if NET45 || STANDARD
 
     /// <summary>
     /// Zip input (deflater) based on Ms DeflateStream (.net 4.5)
@@ -45,22 +45,27 @@ namespace Hjg.Pngcs.Zlib {
             return r;
         }
 
-        public override void Close()
+        protected override void Dispose(bool disposing)
         {
+            if (!disposing)
+                return;
+
             if(!initdone) doInit(); // can happen if never called write
             if(closed) return;
             closed = true;
             if(deflateStream != null)
             {
-                deflateStream.Close();
+                deflateStream.Dispose();
             }
             if(crcread == null)
             { // eat trailing 4 bytes
                 crcread = new byte[4];
                 for(int i = 0; i < 4; i++) crcread[i] = (byte)rawStream.ReadByte();
             }
-            if(!leaveOpen)
-                rawStream.Close();
+            if (!leaveOpen)
+                rawStream.Dispose();
+
+            base.Dispose(disposing);
         }
 
         private void initStream()
@@ -101,4 +106,4 @@ namespace Hjg.Pngcs.Zlib {
         }
     }
 #endif
-}
+    }

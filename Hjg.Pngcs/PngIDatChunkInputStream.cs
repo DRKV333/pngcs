@@ -66,14 +66,6 @@ namespace Hjg.Pngcs {
                 EndChunkGoForNext(); // rare, but...
         }
 
-        /// <summary>
-        /// does NOT close the associated stream!
-        /// </summary>
-        ///
-        public override void Close() {
-            base.Close(); // nothing
-        }
-
         private void EndChunkGoForNext() {
             // Called after readging the last byte of chunk
             // Checks CRC, and read ID from next CHUNK

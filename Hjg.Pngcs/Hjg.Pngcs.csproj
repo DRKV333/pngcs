@@ -7,25 +7,39 @@
 		<Product>Hjg.Pngcs</Product>
 		<AssemblyVersion>1.1.4.1</AssemblyVersion>
 		<FileVersion>1.1.4.1</FileVersion>
-		<Configurations>Debug;Release;Debug45;Release45</Configurations>
+		<Configurations>Debug;Release;Debug45;Release45;DebugStandard;ReleaseStandard</Configurations>
 	</PropertyGroup>
 	
 	<PropertyGroup>
-		<IsSharpZipLibBuild>true</IsSharpZipLibBuild>
-		<IsSharpZipLibBuild Condition="'$(Configuration)' == 'Debug45' OR '$(Configuration)' == 'Release45'">false</IsSharpZipLibBuild>
+		<IsSharpZipLibBuild>false</IsSharpZipLibBuild>
 	</PropertyGroup>
 	
-	<PropertyGroup>
-		<DefineConstants Condition="!$(IsSharpZipLibBuild)">$(DefineConstants);NET45</DefineConstants>
-		<DefineConstants Condition="$(IsSharpZipLibBuild)">$(DefineConstants);SHARPZIPLIB</DefineConstants>
-	</PropertyGroup>
+	<Choose>
+		<When Condition="'$(Configuration)' == 'Debug' OR '$(Configuration)' == 'Release'">
+			<PropertyGroup>
+				<IsSharpZipLibBuild>true</IsSharpZipLibBuild>
+				<DefineConstants>$(DefineConstants);SHARPZIPLIB</DefineConstants>
+				<TargetFramework>net20</TargetFramework>
+			</PropertyGroup>
+		</When>
+		
+		<When Condition="'$(Configuration)' == 'Debug45' OR '$(Configuration)' == 'Release45'">
+			<PropertyGroup>
+				<DefineConstants>$(DefineConstants);NET45</DefineConstants>
+				<TargetFramework>net45</TargetFramework>
+			</PropertyGroup>
+		</When>
+		
+		<When Condition="'$(Configuration)' == 'DebugStandard' OR '$(Configuration)' == 'ReleaseStandard'">
+			<PropertyGroup>
+				<DefineConstants>$(DefineConstants);STANDARD</DefineConstants>
+				<TargetFramework>netstandard1.1</TargetFramework>
+			</PropertyGroup>
+		</When>
+	</Choose>
 	
-	<PropertyGroup>
-		<TargetFramework Condition="$(IsSharpZipLibBuild)">net20</TargetFramework>
-		<TargetFramework Condition="!$(IsSharpZipLibBuild)">net45</TargetFramework>
-	</PropertyGroup>
 	
 	<ItemGroup>
-	  <PackageReference Condition="$(IsSharpZipLibBuild)" Include="SharpZipLib" Version="0.86.0" />
+		<PackageReference Condition="$(IsSharpZipLibBuild)" Include="SharpZipLib" Version="0.86.0" />
 	</ItemGroup>
 </Project>
