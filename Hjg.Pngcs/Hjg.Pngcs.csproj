@@ -7,7 +7,6 @@
 		<Product>Hjg.Pngcs</Product>
 		<AssemblyVersion>1.1.4.1</AssemblyVersion>
 		<FileVersion>1.1.4.1</FileVersion>
-		<TargetFramework>net461</TargetFramework>
 		<Configurations>Debug;Release;Debug45;Release45</Configurations>
 	</PropertyGroup>
 	
@@ -19,6 +18,11 @@
 	<PropertyGroup>
 		<DefineConstants Condition="!$(IsSharpZipLibBuild)">$(DefineConstants);NET45</DefineConstants>
 		<DefineConstants Condition="$(IsSharpZipLibBuild)">$(DefineConstants);SHARPZIPLIB</DefineConstants>
+	</PropertyGroup>
+	
+	<PropertyGroup>
+		<TargetFramework Condition="$(IsSharpZipLibBuild)">net20</TargetFramework>
+		<TargetFramework Condition="!$(IsSharpZipLibBuild)">net45</TargetFramework>
 	</PropertyGroup>
 	
 	<ItemGroup>
